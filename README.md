@@ -32,7 +32,7 @@ The task role can only call `bedrock-mantle:CreateInference`. The ALB is interna
      --parameter-overrides DesiredCount=0
    ```
    If your account already has the GitHub OIDC provider, add `CreateGitHubOIDCProvider=false`.
-2. Put the `GitHubDeployRoleArn` output into `AWS_ROLE_ARN` in `.github/workflows/deploy.yml`, then push to `main`.
+2. Put the `GitHubDeployRoleArn` output into `AWS_ROLE_ARN` in `.github/workflows/deploy.yml` (if you deploy to a different account), then push to `main`.
    The workflow builds and pushes the image.
 3. Start the service:
    ```
