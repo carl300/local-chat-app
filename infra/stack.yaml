@@ -16,6 +16,12 @@ Parameters:
   GitHubBranch:
     Type: String
     Default: main
+  GitHubSubjectPrefix:
+    Type: String
+    Default: "repo:carl300@124004077/local-chat-app@1408170585"
+    Description: >
+      OIDC subject prefix for repos using GitHub's immutable subject format
+      (curl https://api.github.com/repos/OWNER/REPO/actions/oidc/customization/sub -> sub_claim_prefix)
   CreateGitHubOIDCProvider:
     Type: String
     Default: "true"
@@ -450,7 +456,9 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubRepo}:ref:refs/heads/${GitHubBranch}"
+                token.actions.githubusercontent.com:sub:
+                  - !Sub "${GitHubSubjectPrefix}:ref:refs/heads/${GitHubBranch}"
+                  - !Sub "repo:${GitHubRepo}:ref:refs/heads/${GitHubBranch}"
       Policies:
         - PolicyName: deploy
           PolicyDocument:
