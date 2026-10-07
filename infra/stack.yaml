@@ -34,6 +34,12 @@ Parameters:
     Type: Number
     Default: 0
     Description: Keep 0 until the pipeline has pushed the first image, then set to 1
+  CloudFrontPrefixListId:
+    Type: String
+    Default: pl-3b927c52
+    Description: >
+      Managed prefix list com.amazonaws.global.cloudfront.origin-facing in this region
+      (us-east-1 = pl-3b927c52; look up with aws ec2 describe-managed-prefix-lists)
   TaskCpu:
     Type: String
     Default: "512"
@@ -155,13 +161,14 @@ Resources:
   AlbSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Internal ALB - HTTP from inside the VPC (CloudFront VPC origin ENIs)
+      GroupDescription: Internal ALB - HTTP from CloudFront (VPC origin) only
       VpcId: !Ref Vpc
       SecurityGroupIngress:
-        - IpProtocol: tcp
+        - Description: CloudFront origin-facing servers
+          IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 10.20.0.0/16
+          SourcePrefixListId: !Ref CloudFrontPrefixListId
       SecurityGroupEgress:
         - IpProtocol: tcp
           FromPort: 3001
